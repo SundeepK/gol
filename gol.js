@@ -59,30 +59,27 @@ function draw() {
 
 }
 
+function getMinBoundingBox(col) {
+    return Math.max(0, col - 1);
+}
+
+function getMaxBoundingBox(col) {
+    return Math.min(col + 1, cellLength - 1);
+}
+
 function countNeighbours(row, col) {
     let nCount = 0;
-    for (let colOffset = - 1; colOffset < 2; colOffset++) {
-        for (let rowOffset = - 1; rowOffset < 2; rowOffset++) {
-            if (col + colOffset === col &&  row + rowOffset === row) {
+    for (let colOffset = getMinBoundingBox(col); colOffset <= getMaxBoundingBox(col); colOffset++) {
+        for (let rowOffset = getMinBoundingBox(row); rowOffset <= getMaxBoundingBox(row); rowOffset++) {
+            if (colOffset === col &&  rowOffset === row) {
                 continue;
             }
-            if (isOutColBounds(col, colOffset) || isOutRowBounds(row, rowOffset)) {
-                continue;
-            }
-            if (cells[col + colOffset][row + rowOffset]) {
+            if (cells[colOffset][ rowOffset]) {
                 nCount++;
             }
         }
     }
     return nCount;
-}
-
-function isOutColBounds(col, colOffset) {
-    return colOffset + col > cellLength - 1 || colOffset + col < 0;
-}
-
-function isOutRowBounds(row, rowOffset) {
-    return row + rowOffset < 0 || row + rowOffset > rowLength - 1;
 }
 
 function create2DArray(rows, cols) {
@@ -96,5 +93,3 @@ function create2DArray(rows, cols) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
-
-
