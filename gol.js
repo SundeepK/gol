@@ -2,6 +2,8 @@
 
 let rows = 0;
 let cols = 0;
+let cellLength;
+let rowLength;
 let cells;
 const cellSizePx = 5;
 let inside;
@@ -18,6 +20,8 @@ function setup() {
             cells[col][row] = getRandomInt(2);
         }
     }
+    cellLength = cells.length;
+    rowLength = cells[0].length;
 }
 
 function draw() {
@@ -37,48 +41,7 @@ function draw() {
     for (let c = 0; c < cells.length; c++) {
         for (let r = 0; r < cells[c].length; r++) {
 
-            let nCount = 0;
-
-            // nw
-            if (c - 1 >= 0 && r - 1 >= 0 && cells[c -1][r-1] === 1) {
-                nCount++
-            }
-
-            // n
-            if (r - 1 >=0 && cells[c][r-1] === 1) {
-                nCount++
-            }
-
-            // ne
-            if (c + 1 < cells.length && r - 1 >= 0 && cells[c + 1][r - 1] === 1) {
-                nCount++
-            }
-
-            // e
-            if (c + 1 < cells.length && cells[c + 1][r] === 1) {
-                nCount++
-            }
-
-            // se
-            if (c + 1 < cells.length && r + 1 < cells[c].length && cells[c + 1][r + 1] === 1) {
-                nCount++
-            }
-
-            // s
-            if (r + 1 < cells[c].length && cells[c][r + 1] === 1) {
-                nCount++
-            }
-
-            // sw
-            if (c - 1 >= 0 && r + 1  < cells[c].length && cells[c - 1][r + 1] === 1) {
-                nCount++
-            }
-
-            // w
-            if (c - 1 >=0 && cells[c - 1][r] === 1) {
-                nCount++
-            }
-
+            let nCount = countNeighbours(r, c);
             let state = cells[c][r];
 
             if (state === 0 && nCount === 3) {
@@ -96,6 +59,31 @@ function draw() {
 
 }
 
+function countNeighbours(row, col) {
+    let nCount = 0;
+    for (let colOffset = - 1; colOffset < 2; colOffset++) {
+        for (let rowOffset = - 1; rowOffset < 2; rowOffset++) {
+            if (col + colOffset === col &&  row + rowOffset === row) {
+                continue;
+            }
+            if (isOutColBounds(col, colOffset) || isOutRowBounds(row, rowOffset)) {
+                continue;
+            }
+            if (cells[col + colOffset][row + rowOffset]) {
+                nCount++;
+            }
+        }
+    }
+    return nCount;
+}
+
+function isOutColBounds(col, colOffset) {
+    return colOffset + col > cellLength - 1 || colOffset + col < 0;
+}
+
+function isOutRowBounds(row, rowOffset) {
+    return row + rowOffset < 0 || row + rowOffset > rowLength - 1;
+}
 
 function create2DArray(rows, cols) {
     let arr = new Array(cols);
